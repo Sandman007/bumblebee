@@ -191,6 +191,7 @@ esac
 	echo "1) GF6 or newer"
 	echo "2) FX5XXX"
 	echo "3) GF4 or older"
+	echo "4) Skip NVidia drivers install (you need to do this by yourself in this case)"
 	read $card
 case $card in
 1)
@@ -199,11 +200,14 @@ case $card in
 	zypper install x11-video-nvidiaG01
 3)
 	zypper install x11-video-nvidiaG01
+4)
+
 *)
 echo
 echo "Please choose a valid option, Press any key to try again"
 read
 clear
+;;
 	
 	modprobe -r nouveau
 	modprobe nvidia
