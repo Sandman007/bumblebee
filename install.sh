@@ -229,8 +229,8 @@ read
 ;;
 esac
 	
-	modprobe -r nouveau
-	modprobe nvidia
+	/sbin/modprobe -r nouveau
+	/sbin/modprobe nvidia
 fi
 
 
