@@ -214,8 +214,8 @@ case $card in
 echo
 echo "Please choose a valid option, Press any key to try again"
 read
-clear
 ;;
+esac
 	
 	modprobe -r nouveau
 	modprobe nvidia
