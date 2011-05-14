@@ -22,8 +22,8 @@ RETVAL=0
 
 start() {
 	echo -n $"Starting up bumblebee X server: "
-	/usr/local/bin/optimusXserver -ac -config /etc/X11/xorg.conf.nvidia -sharevts -modulepath /usr/lib/nvidia-current/xorg,/usr/lib/xorg/modules -nolisten tcp -noreset :1 vt9 &
-	touch "$lockfile" && success || failure
+	/usr/local/bin/optimusXserver -ac -config /etc/X11/xorg.conf.nvidia -sharevts -nolisten tcp -noreset :1 vt9 &
+	touch "$lockfile" && rc_active || rc_failed
 	RETVAL=$?
 	echo
 }
