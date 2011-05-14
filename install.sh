@@ -1,18 +1,5 @@
 #!/bin/bash -l
 
-# ----------------------------------------------------------------------------
-# "Red Bull License"
-# <mj@casalogic.dk> wrote this file and is providing free support
-# in any spare time. If you need extended support, you can fuel him up by
-# donating a Red Bull here to get him through the nights..:
-#
-# https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=mj%40casalogic
-# %2edk&lc=US&item_name=The%20Bumblebee%20Project%20by%20Martin%20Juhl&amount=
-# 3%2e00&currency_code=EUR&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateC
-# C_LG%2egif%3aNonHosted
-# 
-# ----------------------------------------------------------------------------
-
 #
 # ----------------------------------------------------------------------------
 # "THE BEER-WARE LICENSE" (Revision 42):
@@ -47,6 +34,8 @@ if [ `cat /etc/issue |grep -nir fedora |wc -l` -gt 0 ]; then
   DISTRO=FEDORA
 elif [ `cat /etc/issue |grep -nir ubuntu |wc -l` -gt 0 ]; then
   DISTRO=UBUNTU
+elif [ `cat /etc/issue |grep -nir openSUSE |wc -l` -gt 0 ]; then
+  DISTRO=OPENSUSE
 elif [ `cat /etc/issue |grep -nir "Arch Linux" |wc -l` -gt 0  ]; then
   DISTRO=ARCH
   echo "You are running Arch Linux, please see the buildscript here for support:"
@@ -83,8 +72,8 @@ if [ $HOME = /root ]; then
     exit 2
 fi
 
-echo "Welcome to the bumblebee installation v.1.3.11"
-echo "Licensed under Red Bull, BEER-WARE License and GPL"
+echo "Welcome to the bumblebee installation v.1.3.10"
+echo "Licensed under BEER-WARE License and GPL"
 echo
 echo "This will enable you to utilize both your Intel and nVidia card"
 echo
@@ -177,7 +166,47 @@ elif [ $DISTRO = FEDORA  ]; then
    ln -s /usr/lib/nvidia-current/libglx.so.270.41.06 /usr/lib/nvidia-current/xorg/libglx.so
    ln -s /usr/lib/nvidia-current/nvidia_drv.so /usr/lib/nvidia-current/xorg/nvidia_drv.so
   fi
+elif [ $DISTRO = OPENSUSE ]; then
+	VERSION=`cat /etc/issue |grep openSUSE | cut -f4 -d" "`
+	echo "Do you want me to install NVidia repository for openSUSE $VERSION (y/n) ?"
+	read $answer
+case "$answer" in
+y | Y )
+	zypper ar -f ftp://download.nvidia.com/opensuse/${VERSION}/nvidia
+	if [ $? -ne 0 ]; then
+   echo
+   echo "Package manager failed to install needed packages..."
+   echo
+   exit 21
+  fi
+          
+	zypper update
+;;
 
+*)
+
+;;
+esac
+	echo "What is your NVidia card family ?"
+	echo "1) GF6 or newer"
+	echo "2) FX5XXX"
+	echo "3) GF4 or older"
+	read $card
+case $card in
+1)
+	zypper install x11-video-nvidiaG02
+2)
+	zypper install x11-video-nvidiaG01
+3)
+	zypper install x11-video-nvidiaG01
+*)
+echo
+echo "Please choose a valid option, Press any key to try again"
+read
+clear
+	
+	modprobe -r nouveau
+	modprobe nvidia
 fi
 
 
@@ -190,6 +219,10 @@ fi
 elif [ $DISTRO = FEDORA ]; then
 if [ `cat /etc/bashrc |grep VGL |wc -l` -ne 0 ]; then
    cp /etc/bashrc.optiorig /etc/bashrc
+fi 
+elif [ $DISTRO = OPENSUSE ]; then
+if [ `cat /etc/bashrc |grep VGL |wc -l` -ne 0 ]; then
+   cp /etc/bash.bashrc.optiorig /etc/bash.bashrc
 fi 
 fi
 
@@ -210,6 +243,10 @@ cp -n /etc/bash.bashrc /etc/bash.bashrc.optiorig
 elif [ $DISTRO = FEDORA  ]; then
 cp install-files/bumblebee.script.fedora /etc/init.d/bumblebee
 cp -n /etc/bashrc /etc/bashrc.optiorig
+elif [ $DISTRO = OPENSUSE  ]; then
+cp install-files/bumblebee.script.openSUSE /etc/rc.d/bumblebee
+cp install-files/bumblebee.script.openSUSE /etc/init.d/bumblebee
+cp -n /etc/bash.bashrc /etc/bash.bashrc.optiorig
 fi 
 cp install-files/virtualgl.conf /etc/modprobe.d/
 cp install-files/optimusXserver /usr/local/bin/
@@ -243,8 +280,7 @@ if [ $DISTRO = UBUNTU  ]; then
   exit 20
  fi
  update-alternatives --remove gl_conf /usr/lib/nvidia-current/ld.so.conf
- rm /etc/alternatives/xorg_extra_modules
- rm /etc/alternatives/xorg_extra_modules-bumblebee 
+ rm /etc/alternatives/xorg_extra_modules 
  ln -s /usr/lib/nvidia-current/xorg /etc/alternatives/xorg_extra_modules-bumblebee
  ldconfig
 elif [ $DISTRO = FEDORA  ]; then
@@ -259,6 +295,25 @@ elif [ $DISTRO = FEDORA  ]; then
   echo "32-bit system detected"
   echo
   yum -y --nogpgcheck install install-files/VirtualGL.i386.rpm
+ fi
+ if [ $? -ne 0 ]; then
+  echo
+  echo "Package manager failed to install VirtualGL..."
+  echo
+  exit 20
+ fi
+ elif [ $DISTRO = OPENSUSE  ]; then
+ if [ "$ARCH" = "x86_64" ]; then
+  echo
+  echo "64-bit system detected"
+  echo
+  echo $PWD
+  zypper -y --no-gpg-check install install-files/VirtualGL.x86_64.rpm
+ elif [ "$ARCH" = "i686" ]; then
+  echo
+  echo "32-bit system detected"
+  echo
+  zypper -y --no-gpg-check install install-files/VirtualGL.i386.rpm
  fi
  if [ $? -ne 0 ]; then
   echo
@@ -323,7 +378,7 @@ echo "6) Dell Vostro 3300"
 echo "7) Dell Vostro 3400"
 echo "8) Samsung RF511"
 echo "9) Toshiba Satellite M645-SP4132L"
-echo "10) Asus U35J/U43JC/U35JC/U43JC/U53JC/P52JC/K52JC/X52JC/N53SV/N61JV/X64JV"
+echo "10) Asus U35J/U43JC/U35JC/U43JC/U53JC/K52JC/X52JC/N53SV/N61JV/X64JV"
 #echo "11) "
 #echo "12) "
 #echo "13) "
@@ -432,6 +487,8 @@ if [ $DISTRO = UBUNTU  ]; then
 update-rc.d bumblebee defaults
 elif [ $DISTRO = FEDORA  ]; then
 chkconfig bumblebee on
+elif [ $DISTRO = OPENSUSE  ]; then
+chkconfig bumblebee on
 fi
 
 
@@ -512,12 +569,24 @@ elif [ $DISTRO = FEDORA  ]; then
  export VGL_COMPRESS
  VGL_READBACK=fbo
  export VGL_READBACK" >> /etc/bashrc
+elif [ $DISTRO = OPENSUSE  ]; then
+ echo "VGL_DISPLAY=:1
+ export VGL_DISPLAY
+ VGL_COMPRESS=$IMAGETRANSPORT
+ export VGL_COMPRESS
+ VGL_READBACK=fbo
+ export VGL_READBACK" >> /etc/bash.bashrc
 fi
 
 echo '#!/bin/sh' > /usr/bin/vglclient-service
 echo 'vglclient -gl' >> /usr/bin/vglclient-service
 chmod +x /usr/bin/vglclient-service
-if [ -d $HOME/.kde/Autostart ]; then
+if [ -d $HOME/.kde4/Autostart ]; then
+   if [ -f $HOME/.kde4/Autostart/vglclient-service ]; then
+   	rm $HOME/.kde4/Autostart/vglclient-service
+   fi
+   ln -s /usr/bin/vglclient-service $HOME/.kde4/Autostart/vglclient-service
+elif [ -d $HOME/.kde/Autostart ]; then
    if [ -f $HOME/.kde/Autostart/vglclient-service ]; then
    	rm $HOME/.kde/Autostart/vglclient-service
    fi
