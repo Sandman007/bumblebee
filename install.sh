@@ -100,6 +100,10 @@ clear
 BUMBLEBEEPWD=$PWD
 echo
 echo "Installing needed packages"
+echo "Getting latest NVidia drivers version"
+NV_DRIVERS_VERSION=`wget -q -O - http://www.nvidia.com/object/unix.html | grep "Linux x86_64/AMD64/EM64T" | cut -f5 -d">" | cut -f1 -d"<"`
+echo "Latest NVidia drivers version is $NV_DRIVERS_VERSION"
+
 if [ $DISTRO = UBUNTU  ]; then
  VERSION=`cat /etc/issue | cut -f2 -d" "`
   if [ $VERSION = 11.04 ]; then 
@@ -134,9 +138,9 @@ elif [ $DISTRO = FEDORA  ]; then
   fi
   rm -rf /tmp/NVIDIA*
   if [ "$ARCH" = "x86_64" ]; then  
-    wget http://us.download.nvidia.com/XFree86/Linux-x86_64/270.41.06/NVIDIA-Linux-x86_64-270.41.06.run -O /tmp/NVIDIA-Linux-driver.run    
+    wget http://us.download.nvidia.com/XFree86/Linux-x86_64/${NV_DRIVERS_VERSION}/NVIDIA-Linux-x86_64-${NV_DRIVERS_VERSION}.run -O /tmp/NVIDIA-Linux-driver.run    
   elif [ "$ARCH" = "i686" ]; then
-    wget http://us.download.nvidia.com/XFree86/Linux-x86/270.41.06/NVIDIA-Linux-x86-270.41.06.run -O /tmp/NVIDIA-Linux-driver.run
+    wget http://us.download.nvidia.com/XFree86/Linux-x86/${NV_DRIVERS_VERSION}/NVIDIA-Linux-x86-${NV_DRIVERS_VERSION}.run -O /tmp/NVIDIA-Linux-driver.run
   fi
   chmod +x /tmp/NVIDIA-Linux-driver.run
   /tmp/NVIDIA-Linux-driver.run --no-x-check -a -K
@@ -151,19 +155,19 @@ elif [ $DISTRO = FEDORA  ]; then
    rm -rf /usr/lib64/nvidia-current/
    rm -rf /usr/lib/nvidia-current/
    mkdir -p /usr/lib64/nvidia-current/
-   mv /tmp/NVIDIA-Linux-x86_64-270.41.06/* /usr/lib64/nvidia-current/
+   mv /tmp/NVIDIA-Linux-x86_64-${NV_DRIVERS_VERSION}/* /usr/lib64/nvidia-current/
    ln -s /usr/lib64/nvidia-current/32 /usr/lib/nvidia-current
    mkdir -p /usr/lib64/nvidia-current/xorg
-   ln -s /usr/lib64/nvidia-current/libglx.so.270.41.06 /usr/lib64/nvidia-current/xorg/libglx.so
+   ln -s /usr/lib64/nvidia-current/libglx.so.${NV_DRIVERS_VERSION} /usr/lib64/nvidia-current/xorg/libglx.so
    ln -s /usr/lib64/nvidia-current/nvidia_drv.so /usr/lib64/nvidia-current/xorg/nvidia_drv.so
    ln -s /usr/lib64/nvidia-current/xorg /usr/lib/nvidia-current/xorg
    ln -s /usr/lib64/xorg/ /usr/lib/xorg
   elif [ "$ARCH" = "i686" ]; then
    rm -rf /usr/lib/nvidia-current/
    mkdir -p /usr/lib/nvidia-current/
-   mv /tmp/NVIDIA-Linux-x86-270.41.06/* /usr/lib/nvidia-current/
+   mv /tmp/NVIDIA-Linux-x86-${NV_DRIVERS_VERSION}/* /usr/lib/nvidia-current/
    mkdir -p /usr/lib/nvidia-current/xorg
-   ln -s /usr/lib/nvidia-current/libglx.so.270.41.06 /usr/lib/nvidia-current/xorg/libglx.so
+   ln -s /usr/lib/nvidia-current/libglx.so.${NV_DRIVERS_VERSION} /usr/lib/nvidia-current/xorg/libglx.so
    ln -s /usr/lib/nvidia-current/nvidia_drv.so /usr/lib/nvidia-current/xorg/nvidia_drv.so
   fi
 elif [ $DISTRO = OPENSUSE ]; then
