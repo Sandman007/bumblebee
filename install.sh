@@ -332,12 +332,12 @@ elif [ $DISTRO = FEDORA  ]; then
   echo "64-bit system detected"
   echo
   echo $PWD
-  zypper -y --no-gpg-check install install-files/VirtualGL.x86_64.rpm
+  zypper --no-gpg-check install -l install-files/VirtualGL.x86_64.rpm
  elif [ "$ARCH" = "i686" ]; then
   echo
   echo "32-bit system detected"
   echo
-  zypper -y --no-gpg-check install install-files/VirtualGL.i386.rpm
+  zypper --no-gpg-check install -l install-files/VirtualGL.i386.rpm
  fi
  if [ $? -ne 0 ]; then
   echo
