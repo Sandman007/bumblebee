@@ -178,15 +178,15 @@ case "$answer" in
 y | Y )
 	zypper ar -f ftp://download.nvidia.com/opensuse/${VERSION}/nvidia
 	if [ $? -ne 0 ]; then
-   echo
-   echo "Package manager failed to install needed packages..."
-   echo
-   exit 21
-  fi
-          
+		echo
+		echo "Package manager failed to install needed packages..."
+		echo
+		exit 21
+	fi
 	zypper update
 ;;
-
+n|N)
+echo "NVidia drivers repository will NOT be installed."
 *)
 
 ;;
