@@ -196,12 +196,16 @@ esac
 case $card in
 1)
 	zypper install x11-video-nvidiaG02
+;;
 2)
 	zypper install x11-video-nvidiaG01
+;;
 3)
 	zypper install x11-video-nvidiaG01
+;;
 4)
 
+;;
 *)
 echo
 echo "Please choose a valid option, Press any key to try again"
