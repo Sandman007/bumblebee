@@ -173,9 +173,7 @@ elif [ $DISTRO = FEDORA  ]; then
 elif [ $DISTRO = OPENSUSE ]; then
 	VERSION=`cat /etc/issue |grep openSUSE | cut -f4 -d" "`
 	echo "Do you want me to install NVidia repository for openSUSE $VERSION (y/n) ?"
-	echo
 	read answer
-	echo
 case "$answer" in
 y|Y)
 	zypper ar -f ftp://download.nvidia.com/opensuse/${VERSION}/nvidia
@@ -202,9 +200,7 @@ esac
 	echo "2) FX5XXX"
 	echo "3) GF4 or older"
 	echo "4) Skip NVidia drivers install (you need to do this by yourself in this case)"
-	echo
 	read card
-	echo
 case $card in
 1)
 	zypper install x11-video-nvidiaG02
@@ -245,7 +241,7 @@ if [ `cat /etc/bashrc |grep VGL |wc -l` -ne 0 ]; then
    cp /etc/bashrc.optiorig /etc/bashrc
 fi 
 elif [ $DISTRO = OPENSUSE ]; then
-if [ `cat /etc/bashrc |grep VGL |wc -l` -ne 0 ]; then
+if [ `cat /etc/bash.bashrc |grep VGL |wc -l` -ne 0 ]; then
    cp /etc/bash.bashrc.optiorig /etc/bash.bashrc
 fi 
 fi
