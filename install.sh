@@ -100,9 +100,6 @@ clear
 BUMBLEBEEPWD=$PWD
 echo
 echo "Installing needed packages"
-echo "Getting latest NVidia drivers version"
-NV_DRIVERS_VERSION=`wget -q -O - http://www.nvidia.com/object/unix.html | grep "Linux x86_64/AMD64/EM64T" | cut -f5 -d">" | cut -f1 -d"<"`
-echo "Latest NVidia drivers version is $NV_DRIVERS_VERSION"
 
 if [ $DISTRO = UBUNTU  ]; then
  VERSION=`cat /etc/issue | cut -f2 -d" "`
@@ -137,6 +134,9 @@ elif [ $DISTRO = FEDORA  ]; then
    exit 21       
   fi
   rm -rf /tmp/NVIDIA*
+  echo "Getting latest NVidia drivers version"
+  NV_DRIVERS_VERSION=`wget -q -O - http://www.nvidia.com/object/unix.html | grep "Linux x86_64/AMD64/EM64T" | cut -f5 -d">" | cut -f1 -d"<"`
+  echo "Latest NVidia drivers version is $NV_DRIVERS_VERSION"
   if [ "$ARCH" = "x86_64" ]; then  
     wget http://us.download.nvidia.com/XFree86/Linux-x86_64/${NV_DRIVERS_VERSION}/NVIDIA-Linux-x86_64-${NV_DRIVERS_VERSION}.run -O /tmp/NVIDIA-Linux-driver.run    
   elif [ "$ARCH" = "i686" ]; then
