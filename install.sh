@@ -270,6 +270,7 @@ cp -n /etc/bashrc /etc/bashrc.optiorig
 elif [ $DISTRO = OPENSUSE  ]; then
 cp install-files/bumblebee.script.openSUSE /etc/rc.d/bumblebee
 cp install-files/bumblebee.script.openSUSE /etc/init.d/bumblebee
+chmod +x /etc/init.d/bumblebee
 cp -n /etc/bash.bashrc /etc/bash.bashrc.optiorig
 fi 
 cp install-files/virtualgl.conf /etc/modprobe.d/
