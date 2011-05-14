@@ -30,6 +30,10 @@ ROOT_UID=0
 #Determine Arch x86_64 or i686
 ARCH=`uname -m`
 
+#Get tools location 
+LSPCI=`whereis lspci | gawk -F' ' '{ print $2 }'`
+MODPROBE=`whereis modprobe | gawk -F' ' '{ print $2 }'`
+
 if [ `cat /etc/issue |grep -nir fedora |wc -l` -gt 0 ]; then
   DISTRO=FEDORA
 elif [ `cat /etc/issue |grep -nir ubuntu |wc -l` -gt 0 ]; then
@@ -123,8 +127,8 @@ if [ $DISTRO = UBUNTU  ]; then
    exit 21
   fi
           
-  modprobe -r nouveau
-  modprobe nvidia-current
+  ${MODPROBE} -r nouveau
+  ${MODPROBE} nvidia-current
 elif [ $DISTRO = FEDORA  ]; then
   yum -y install wget binutils gcc kernel-devel mesa-libGL mesa-libGLU
   if [ $? -ne 0 ]; then
@@ -149,8 +153,8 @@ elif [ $DISTRO = FEDORA  ]; then
   cd $BUMBLEBEEPWD
   depmod -a
   ldconfig 
-  modprobe -r nouveau
-  modprobe nvidia
+  ${MODPROBE} -r nouveau
+  ${MODPROBE} nvidia
   if [ "$ARCH" = "x86_64" ]; then
    rm -rf /usr/lib64/nvidia-current/
    rm -rf /usr/lib/nvidia-current/
@@ -225,8 +229,8 @@ read
 ;;
 esac
 	
-	/sbin/modprobe -r nouveau
-	/sbin/modprobe nvidia
+	${MODPROBE} -r nouveau
+	${MODPROBE} nvidia
 fi
 
 
@@ -354,12 +358,12 @@ if [ "`cat /etc/modules |grep "nvidia-current" |wc -l`" -eq "0" ]; then
 echo "nvidia-current" >> /etc/modules
 fi
 
-INTELBUSID=`echo "PCI:"\`lspci |grep VGA |grep Intel |cut -f1 -d:\`":"\`lspci |grep VGA |grep Intel |cut -f2 -d: |cut -f1 -d.\`":"\`lspci |grep VGA |grep Intel |cut -f2 -d. |cut -f1 -d" "\``
+INTELBUSID=`echo "PCI:"\`${LSPCI} |grep VGA |grep Intel |cut -f1 -d:\`":"\`${LSPCI} |grep VGA |grep Intel |cut -f2 -d: |cut -f1 -d.\`":"\`${LSPCI} |grep VGA |grep Intel |cut -f2 -d. |cut -f1 -d" "\``
 
-if [ `lspci |grep VGA |wc -l` -eq 2 ]; then 
-   NVIDIABUSID=`echo "PCI:"\`lspci |grep VGA |grep nVidia |cut -f1 -d:\`":"\`lspci |grep VGA |grep nVidia |cut -f2 -d: |cut -f1 -d.\`":"\`lspci |grep VGA |grep nVidia |cut -f2 -d. |cut -f1 -d" "\``
-elif [ `lspci |grep 3D |wc -l` -eq 1 ]; then
-   NVIDIABUSID=`echo "PCI:"\`lspci |grep 3D |grep nVidia |cut -f1 -d:\`":"\`lspci |grep 3D |grep nVidia |cut -f2 -d: |cut -f1 -d.\`":"\`lspci |grep 3D |grep nVidia |cut -f2 -d. |cut -f1 -d" "\``   
+if [ `${LSPCI} |grep VGA |wc -l` -eq 2 ]; then 
+   NVIDIABUSID=`echo "PCI:"\`${LSPCI} |grep VGA |grep nVidia |cut -f1 -d:\`":"\`${LSPCI} |grep VGA |grep nVidia |cut -f2 -d: |cut -f1 -d.\`":"\`${LSPCI} |grep VGA |grep nVidia |cut -f2 -d. |cut -f1 -d" "\``
+elif [ `${LSPCI} |grep 3D |wc -l` -eq 1 ]; then
+   NVIDIABUSID=`echo "PCI:"\`${LSPCI} |grep 3D |grep nVidia |cut -f1 -d:\`":"\`${LSPCI} |grep 3D |grep nVidia |cut -f2 -d: |cut -f1 -d.\`":"\`${LSPCI} |grep 3D |grep nVidia |cut -f2 -d. |cut -f1 -d" "\``   
 else
 echo 
 echo "The BusID of the nVidia card can't be determined"
