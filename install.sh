@@ -1,5 +1,18 @@
 #!/bin/bash -l
 
+# ----------------------------------------------------------------------------
+# "Red Bull License"
+# <mj@casalogic.dk> wrote this file and is providing free support
+# in any spare time. If you need extended support, you can fuel him up by
+# donating a Red Bull here to get him through the nights..:
+#
+# https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=mj%40casalogic
+# %2edk&lc=US&item_name=The%20Bumblebee%20Project%20by%20Martin%20Juhl&amount=
+# 3%2e00&currency_code=EUR&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateC
+# C_LG%2egif%3aNonHosted
+# 
+# ----------------------------------------------------------------------------
+
 #
 # ----------------------------------------------------------------------------
 # "THE BEER-WARE LICENSE" (Revision 42):
@@ -76,8 +89,8 @@ if [ $HOME = /root ]; then
     exit 2
 fi
 
-echo "Welcome to the bumblebee installation v.1.3.10"
-echo "Licensed under BEER-WARE License and GPL"
+echo "Welcome to the bumblebee installation v.1.3.17"
+echo "Licensed under Red Bull, BEER-WARE License and GPL"
 echo
 echo "This will enable you to utilize both your Intel and nVidia card"
 echo
@@ -85,7 +98,6 @@ echo "Please note that this script will probably only work with Ubuntu and Fedor
 echo "and has (by me) only been tested on Ubuntu Natty 11.04 and Fedora 14 but should work on others as well"
 echo
 echo "Are you sure you want to proceed?? (Y/N)"
-echo
 
 read answer
 
@@ -164,8 +176,10 @@ elif [ $DISTRO = FEDORA  ]; then
    mkdir -p /usr/lib64/nvidia-current/xorg
    ln -s /usr/lib64/nvidia-current/libglx.so.${NV_DRIVERS_VERSION} /usr/lib64/nvidia-current/xorg/libglx.so
    ln -s /usr/lib64/nvidia-current/nvidia_drv.so /usr/lib64/nvidia-current/xorg/nvidia_drv.so
-   ln -s /usr/lib64/nvidia-current/xorg /usr/lib/nvidia-current/xorg
-   ln -s /usr/lib64/xorg/ /usr/lib/xorg
+   rm -rf /usr/lib64/nvidia-current/xorg/xorg
+   ln -s /usr/lib64/nvidia-current/xorg/ /usr/lib32/nvidia-current/xorg
+   rm -rf /usr/lib64/xorg/xorg
+   ln -s /usr/lib64/xorg/ /usr/lib32/xorg
   elif [ "$ARCH" = "i686" ]; then
    rm -rf /usr/lib/nvidia-current/
    mkdir -p /usr/lib/nvidia-current/
@@ -281,7 +295,7 @@ if [ "$ARCH" = "x86_64" ]; then
  cp install-files/optirun64 /usr/local/bin/
  chmod +x /usr/local/bin/optirun*
 else
- cp install-files/optirun32 /usr/local/bin/optirun
+ cp install-files/optirun64 /usr/local/bin/optirun
  chmod +x /usr/local/bin/optirun
 fi
 
@@ -304,7 +318,9 @@ if [ $DISTRO = UBUNTU  ]; then
   exit 20
  fi
  update-alternatives --remove gl_conf /usr/lib/nvidia-current/ld.so.conf
- rm /etc/alternatives/xorg_extra_modules 
+ rm /etc/alternatives/xorg_extra_modules
+ rm /etc/alternatives/xorg_extra_modules-bumblebee 
+ rm /usr/lib/nvidia-current/xorg/xorg
  ln -s /usr/lib/nvidia-current/xorg /etc/alternatives/xorg_extra_modules-bumblebee
  ldconfig
 elif [ $DISTRO = FEDORA  ]; then
@@ -399,10 +415,10 @@ echo "3) CLEVO W150HNQ"
 echo "4) Asus EeePC 1215N"
 echo "5) Acer Aspire 5745PG"
 echo "6) Dell Vostro 3300"
-echo "7) Dell Vostro 3400"
+echo "7) Dell Vostro 3400/3500"
 echo "8) Samsung RF511"
 echo "9) Toshiba Satellite M645-SP4132L"
-echo "10) Asus U35J/U43JC/U35JC/U43JC/U53JC/K52JC/X52JC/N53SV/N61JV/X64JV"
+echo "10) Asus U35J/U43JC/U35JC/U43JC/U53JC/P52JC/K52JC/X52JC/N53SV/N61JV/X64JV"
 #echo "11) "
 #echo "12) "
 #echo "13) "
